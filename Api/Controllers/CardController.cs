@@ -1,4 +1,5 @@
 ﻿using Common.DTOs.Card;
+using Common.DTOs.Paging;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
 
@@ -16,16 +17,14 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<CardDto>> GetAllCards()
-        {
-            IEnumerable<CardDto> cards = await cardService.GetAllCardsAsync(HttpContext.RequestAborted);
-            return cards;
-        }
+        public async Task<PageResponseDto<CardDto>> GetCards([FromQuery] PageRequestDto pageRequestDto)
+            => await cardService.GetCardsAsync(pageRequestDto, HttpContext.RequestAborted);
 
         [HttpPost]
-        public async Task CreateCard([FromBody] CardDto card)
+        public async Task<object> CreateCard([FromBody] CardDto card)
         {
-            await cardService.CreateCardAsync(card, HttpContext.RequestAborted);
+            int id = await cardService.CreateCardAsync(card, HttpContext.RequestAborted);
+            return new { id };
         }
 
         [HttpDelete("{id}")]

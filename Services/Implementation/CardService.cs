@@ -1,6 +1,5 @@
 ﻿using Common.DTOs.Card;
 using Common.DTOs.Paging;
-using Common.DTOs.Study;
 using Database;
 using Database.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +17,7 @@ namespace Services.Implementation
             this.context = context;
         }
 
-        public async Task CreateCardAsync(CardDto card, CancellationToken cancellationToken)
+        public async Task<int> CreateCardAsync(CardDto card, CancellationToken cancellationToken)
         {
             Card newCard = new Card()
             {
@@ -29,6 +28,8 @@ namespace Services.Implementation
             context.Card.Add(newCard);
 
             await context.SaveChangesAsync(cancellationToken);
+
+            return newCard.Id;
         }
 
         public async Task DeleteCardAsync(int id, CancellationToken cancellation)
@@ -41,30 +42,23 @@ namespace Services.Implementation
             }
         }
 
-        public async Task<IEnumerable<CardDto>> GetAllCardsAsync(CancellationToken cancellationToken)
-            =>  await context.Card
-                .AsNoTracking()
-                .Select(CardExpressions.CardDtoMapper)
-                .OrderByDescending(x => x.Id)
-                .ToListAsync(cancellationToken);
-
-        public async Task<StudyCardsDto> GetCardsAsync(PageRequestDto pageRequest, CancellationToken cancellation)
+        public async Task<PageResponseDto<CardDto>> GetCardsAsync(PageRequestDto pageRequest, CancellationToken cancellation)
         {
-            int skip = pageRequest.Page * pageRequest.PageSize;
+            int skip = pageRequest.Page * pageRequest.PageSize + pageRequest.Offset;
 
             IEnumerable<CardDto> cards = await context.Card
                 .AsNoTracking()
+                .OrderByDescending(x => x.Id)
                 .Select(CardExpressions.CardDtoMapper)
                 .Skip(skip)
                 .Take(pageRequest.PageSize)
-                .OrderBy(x => x.Word)
                 .ToListAsync(cancellation);
 
             int total = await context.Card.CountAsync(cancellation);
 
-            return new StudyCardsDto
+            return new PageResponseDto<CardDto>
             { 
-                Cards = cards,
+                Items = cards,
                 Total = total
             };
         }

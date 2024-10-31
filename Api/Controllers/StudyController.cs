@@ -1,5 +1,5 @@
-﻿using Common.DTOs.Paging;
-using Common.DTOs.Study;
+﻿using Common.DTOs.Card;
+using Common.DTOs.Paging;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
 
@@ -17,7 +17,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("cards")]
-        public async Task<StudyCardsDto> GetCards([FromQuery] PageRequestDto pageRequest)
+        public async Task<PageResponseDto<CardDto>> GetCards([FromQuery] PageRequestDto pageRequest)
             => await cardService.GetCardsAsync(pageRequest, HttpContext.RequestAborted);
     }
 }
