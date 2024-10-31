@@ -19,7 +19,19 @@ namespace Api.Controllers
         public async Task<IEnumerable<CardDto>> GetAllCards()
         {
             IEnumerable<CardDto> cards = await cardService.GetAllCardsAsync(HttpContext.RequestAborted);
-            return cards; 
+            return cards;
+        }
+
+        [HttpPost]
+        public async Task CreateCard([FromBody] CardDto card)
+        {
+            await cardService.CreateCardAsync(card, HttpContext.RequestAborted);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task DeleteCard(int id)
+        {
+            await cardService.DeleteCardAsync(id, HttpContext.RequestAborted);
         }
     }
 }
