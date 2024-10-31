@@ -5,3 +5,10 @@
 /Api/bin/Debug/net8.0
 /Api/obj
 /.vs/Api
+/.vs/ProjectEvaluation
+/Common/bin/Debug/net8.0
+/Common/obj
+/Database/bin/Debug/net8.0
+/Database/obj
+/Services/bin/Debug/net8.0
+/Services/obj
